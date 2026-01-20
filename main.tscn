@@ -1,0 +1,62 @@
+[gd_scene load_steps=10 format=3 uid="uid://dgu61r435k8ki"]
+
+[ext_resource type="PackedScene" uid="uid://dec82bblfe1b3" path="res://car.tscn" id="1_ig7tw"]
+[ext_resource type="Texture2D" uid="uid://cw6o23iamswyn" path="res://assets/materials/road/textures/brick_pavement_diff_1k.jpg" id="1_lquwl"]
+[ext_resource type="Texture2D" uid="uid://br0hebmj5hkvd" path="res://assets/the_sky_is_on_fire_4k.exr" id="2_0xm2m"]
+[ext_resource type="Texture2D" uid="uid://dh4y4pyvfbni6" path="res://assets/materials/road/textures/brick_pavement_nor_gl_1k.jpg" id="2_7mycd"]
+[ext_resource type="Script" uid="uid://n2hkx3em3lx6" path="res://speed_ui.gd" id="3_h2yge"]
+
+[sub_resource type="ORMMaterial3D" id="ORMMaterial3D_272bh"]
+albedo_color = Color(1, 1, 1, 0)
+albedo_texture = ExtResource("1_lquwl")
+normal_enabled = true
+normal_texture = ExtResource("2_7mycd")
+uv1_scale = Vector3(100, 5, 1)
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_h2yge"]
+panorama = ExtResource("2_0xm2m")
+
+[sub_resource type="Sky" id="Sky_1bvp3"]
+sky_material = SubResource("PanoramaSkyMaterial_h2yge")
+
+[sub_resource type="Environment" id="Environment_lquwl"]
+background_mode = 2
+sky = SubResource("Sky_1bvp3")
+adjustment_brightness = 1.35
+adjustment_contrast = 1.25
+
+[node name="Node3D" type="Node3D"]
+
+[node name="floor" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 588.72253)
+use_collision = true
+size = Vector3(59.088867, 1, 1269.0085)
+material = SubResource("ORMMaterial3D_272bh")
+
+[node name="car" parent="." instance=ExtResource("1_ig7tw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5384896, 0)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.7642424, -0.5695141, -0.30263472, 0.55757505, -0.819284, 0.13373022, -0.3241052, -0.06653939, 0.94367814, 0, 12.823637, 0.8349457)
+light_color = Color(0.6114742, 0.5592616, 0.5113147, 1)
+light_energy = 3.26
+light_indirect_energy = 6.541
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_lquwl")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="SpeedLabel" type="Label" parent="CanvasLayer"]
+modulate = Color(0, 0, 0, 1)
+self_modulate = Color(0, 0, 0, 1)
+top_level = true
+anchors_preset = -1
+anchor_right = 0.013
+anchor_bottom = 0.013
+offset_right = 25.024
+offset_bottom = 14.576
+text = "0"
+script = ExtResource("3_h2yge")
+car_path = NodePath("../../car")
