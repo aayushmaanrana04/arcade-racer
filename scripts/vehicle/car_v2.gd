@@ -22,6 +22,7 @@ var drift_fsm: DriftStateMachine
 @export_group("Engine")
 @export var engine_torque: float = 400.0
 @export var brake_force: float = 20.0
+@export var handbrake_force: float = 80.0
 
 @export_group("Steering")
 @export var max_steer_angle: float = 0.8
@@ -160,6 +161,8 @@ func _physics_process(delta: float) -> void:
 # FORCE APPLICATION (Only place forces are applied)
 # ─────────────────────────────────────────────
 func _apply_drive_forces(torque_split: Dictionary, brake_split: Dictionary) -> void:
+	var handbrake_active := intent.handbrake > 0.5
+
 	# Front axle
 	var front_torque: float = torque_split.get("front", 0.0)
 	if front_torque > 0.0:
@@ -169,9 +172,9 @@ func _apply_drive_forces(torque_split: Dictionary, brake_split: Dictionary) -> v
 		wheel_fl.engine_force = 0.0
 		wheel_fr.engine_force = 0.0
 
-	# Rear axle
+	# Rear axle - cut power when handbrake is on
 	var rear_torque: float = torque_split.get("rear", 0.0)
-	if rear_torque > 0.0:
+	if rear_torque > 0.0 and not handbrake_active:
 		wheel_rl.engine_force = rear_torque * 0.5
 		wheel_rr.engine_force = rear_torque * 0.5
 	else:
@@ -183,8 +186,14 @@ func _apply_drive_forces(torque_split: Dictionary, brake_split: Dictionary) -> v
 	var rear_brake: float = brake_split.get("rear", 0.0)
 	wheel_fl.brake = front_brake * 0.5
 	wheel_fr.brake = front_brake * 0.5
-	wheel_rl.brake = rear_brake * 0.5
-	wheel_rr.brake = rear_brake * 0.5
+
+	# Handbrake - lock rear wheels
+	if handbrake_active:
+		wheel_rl.brake = handbrake_force
+		wheel_rr.brake = handbrake_force
+	else:
+		wheel_rl.brake = rear_brake * 0.5
+		wheel_rr.brake = rear_brake * 0.5
 
 
 func _apply_steering(delta: float) -> void:
@@ -202,9 +211,14 @@ func _apply_steering(delta: float) -> void:
 
 func _apply_drift_grip() -> void:
 	var is_drifting := drift_fsm.is_drifting()
+	var handbrake_active := intent.handbrake > 0.5
 
-	# Rear grip - reduces significantly during drift
-	var rear_mult := drift_rear_grip if is_drifting else 1.0
+	# Rear grip - reduces during drift or handbrake
+	var rear_mult := 1.0
+	if handbrake_active:
+		rear_mult = 0.5  # Very low grip for handbrake turns
+	elif is_drifting:
+		rear_mult = drift_rear_grip
 	var rear_grip := normal_rear_grip * rear_mult
 	wheel_rl.wheel_friction_slip = rear_grip
 	wheel_rr.wheel_friction_slip = rear_grip

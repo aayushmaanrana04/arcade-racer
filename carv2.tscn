@@ -1,6 +1,6 @@
 [gd_scene load_steps=21 format=4 uid="uid://dqv3cxqpo50pp"]
 
-[ext_resource type="Script" path="res://scripts/vehicle/car_v2.gd" id="1_uoj53"]
+[ext_resource type="Script" uid="uid://dd6gsvidis8jr" path="res://scripts/vehicle/car_v2.gd" id="1_uoj53"]
 [ext_resource type="Script" uid="uid://bge442hoo5qgx" path="res://car_camera.gd" id="2_k61xc"]
 [ext_resource type="Material" uid="uid://cdjjumpo0bcb3" path="res://assets/materials/type.tres" id="2_uoj53"]
 [ext_resource type="PackedScene" uid="uid://6std0jcdl036" path="res://assets/car.glb" id="4_06lh1"]
@@ -225,6 +225,12 @@ current = true
 fov = 91.0
 near = 0.02
 script = ExtResource("2_k61xc")
+follow_speed = 3.0
+max_fov = 110.0
+fov_speed = 2.0
+drift_fov_boost = 10.0
+camera_tilt = 8.0
+speed_height_drop = 0.8
 
 [node name="_visuals" type="Node3D" parent="."]
 visible = false
@@ -267,7 +273,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.78517187, -0.16247952, 1.0
 use_as_steering = true
 wheel_radius = 0.37
 wheel_friction_slip = 2.8
-suspension_travel = 0.2
 suspension_stiffness = 25.0
 suspension_max_force = 4000.0
 
@@ -276,7 +281,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.7851265, -0.16247943, 1.071
 use_as_steering = true
 wheel_radius = 0.37
 wheel_friction_slip = 2.8
-suspension_travel = 0.2
 suspension_stiffness = 25.0
 suspension_max_force = 4000.0
 
@@ -285,7 +289,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.78517234, -0.16247928, -1.
 use_as_traction = true
 wheel_radius = 0.37
 wheel_friction_slip = 1.4
-suspension_travel = 0.2
 suspension_stiffness = 22.0
 suspension_max_force = 4000.0
 
@@ -294,7 +297,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78512603, -0.16247922, -1.4
 use_as_traction = true
 wheel_radius = 0.37
 wheel_friction_slip = 1.4
-suspension_travel = 0.2
 suspension_stiffness = 22.0
 suspension_max_force = 4000.0
 
@@ -343,6 +345,26 @@ visibility_aabb = AABB(-2.0267882, -1.4797543, -2.3055253, 5.1355505, 6.434715, 
 local_coords = true
 process_material = SubResource("ParticleProcessMaterial_td361")
 draw_pass_1 = SubResource("SphereMesh_td361")
+
+[node name="HeadlightLeft" type="SpotLight3D" parent="."]
+transform = Transform3D(-1, -1.518081e-08, -8.609464e-08, -4.3881744e-08, 0.93892026, 0.344135, 7.5611744e-08, 0.344135, -0.93892026, 0.6685277, 0.04084891, 2.4266038)
+light_color = Color(1, 0.97, 0.9, 1)
+light_energy = 8.0
+shadow_enabled = true
+spot_range = 50.0
+spot_attenuation = 0.7
+spot_angle = 30.0
+spot_angle_attenuation = 0.5
+
+[node name="HeadlightRight" type="SpotLight3D" parent="."]
+transform = Transform3D(-1, -1.518081e-08, -8.609464e-08, -4.3881744e-08, 0.93892026, 0.344135, 7.5611744e-08, 0.344135, -0.93892026, -0.66658425, 0.04084891, 2.4266038)
+light_color = Color(1, 0.97, 0.9, 1)
+light_energy = 8.0
+shadow_enabled = true
+spot_range = 50.0
+spot_attenuation = 0.7
+spot_angle = 30.0
+spot_angle_attenuation = 0.5
 
 [editable path="__visuals"]
 [editable path="visuals"]
