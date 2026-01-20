@@ -1,0 +1,34 @@
+[gd_scene load_steps=5 format=3 uid="uid://wh883jbntglg"]
+
+[ext_resource type="PackedScene" uid="uid://dgu61r435k8ki" path="res://main.tscn" id="1_main"]
+[ext_resource type="Shader" uid="uid://bh0ehosnme0xj" path="res://shaders/pixelation.gdshader" id="2_shader"]
+[ext_resource type="Script" uid="uid://f074xkwm6p17" path="res://post_process_controller.gd" id="3_controller"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pixel"]
+shader = ExtResource("2_shader")
+shader_parameter/target_resolution = Vector2(256, 144)
+shader_parameter/color_levels = 8.0
+shader_parameter/blend = 0.0
+shader_parameter/quantize_colors = true
+
+[node name="Game" type="Node"]
+
+[node name="Main" parent="." instance=ExtResource("1_main")]
+
+[node name="PostProcessing" type="CanvasLayer" parent="."]
+layer = 100
+script = ExtResource("3_controller")
+target_resolution = Vector2(1280, 720)
+
+[node name="PixelationEffect" type="ColorRect" parent="PostProcessing"]
+material = SubResource("ShaderMaterial_pixel")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = 0.0
+offset_right = 0.0
+offset_bottom = 0.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
