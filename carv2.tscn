@@ -1,10 +1,11 @@
-[gd_scene load_steps=21 format=4 uid="uid://dqv3cxqpo50pp"]
+[gd_scene load_steps=22 format=4 uid="uid://dqv3cxqpo50pp"]
 
 [ext_resource type="Script" uid="uid://dd6gsvidis8jr" path="res://scripts/vehicle/car_v2.gd" id="1_uoj53"]
 [ext_resource type="Script" uid="uid://bge442hoo5qgx" path="res://car_camera.gd" id="2_k61xc"]
 [ext_resource type="Material" uid="uid://cdjjumpo0bcb3" path="res://assets/materials/type.tres" id="2_uoj53"]
 [ext_resource type="PackedScene" uid="uid://6std0jcdl036" path="res://assets/car.glb" id="4_06lh1"]
 [ext_resource type="PackedScene" uid="uid://b5w3hueb10u2a" path="res://assets/car.blend" id="5_td361"]
+[ext_resource type="Script" uid="uid://c1lslwffiodev" path="res://scripts/audio/jdm_engine_audio.gd" id="6_audio"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7822p"]
 albedo_color = Color(0.08280001, 0.14748009, 0.36, 1)
@@ -365,6 +366,13 @@ spot_range = 50.0
 spot_attenuation = 0.7
 spot_angle = 30.0
 spot_angle_attenuation = 0.5
+
+[node name="EngineAudio" type="Node3D" parent="."]
+script = ExtResource("6_audio")
+engine_type = 1
+aggression = 0.663
+exhaust_crackle = 0.72
+has_flutter = true
 
 [editable path="__visuals"]
 [editable path="visuals"]

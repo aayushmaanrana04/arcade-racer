@@ -62,6 +62,11 @@ var drift_fsm: DriftStateMachine
 var smoke_nodes: Array[GPUParticles3D]
 
 # ─────────────────────────────────────────────
+# ENGINE AUDIO
+# ─────────────────────────────────────────────
+@onready var engine_audio: Node3D = $EngineAudio
+
+# ─────────────────────────────────────────────
 # INTERNAL STATE
 # ─────────────────────────────────────────────
 var normal_rear_grip: float = 0.0
@@ -152,6 +157,9 @@ func _physics_process(delta: float) -> void:
 	# STEP 10: Sync visuals (non-physics)
 	_sync_wheel_visuals(delta)
 	_update_drift_smoke()
+
+	# STEP 11: Update engine audio
+	_update_engine_audio()
 
 	# Debug output
 	_debug_print()
@@ -268,6 +276,19 @@ func _update_drift_smoke() -> void:
 
 	smoke_rl.global_position = mesh_rl.global_position
 	smoke_rr.global_position = mesh_rr.global_position
+
+
+func _update_engine_audio() -> void:
+	if engine_audio == null:
+		return
+
+	# Feed powertrain state to audio controller
+	engine_audio.set_engine_state(
+		powertrain.current_rpm,
+		powertrain.redline_rpm,
+		intent.throttle,
+		powertrain.is_revving
+	)
 
 
 # ─────────────────────────────────────────────
