@@ -22,7 +22,7 @@ sky_material = SubResource("PanoramaSkyMaterial_h2yge")
 [sub_resource type="Environment" id="Environment_lquwl"]
 background_mode = 2
 sky = SubResource("Sky_1bvp3")
-volumetric_fog_enabled = true
+sdfgi_read_sky_light = false
 volumetric_fog_density = 0.02
 volumetric_fog_anisotropy = 0.7
 volumetric_fog_length = 80.0
@@ -63,12 +63,11 @@ script = ExtResource("3_h2yge")
 car_path = NodePath("../../car2")
 
 [node name="car2" parent="." instance=ExtResource("5_lquwl")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5393887, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3557744, 0)
 engine_torque = 8000.0
 brake_force = 40.0
 handbrake_force = 100.0
-max_steer_angle = 0.9
-steer_speed = 12.0
 drift_rear_grip = 0.8
 drift_front_grip = 0.85
 drift_min_throttle = 0.25
+drive_type = 2

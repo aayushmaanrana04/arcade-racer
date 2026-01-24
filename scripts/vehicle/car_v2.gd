@@ -269,11 +269,13 @@ func _sync_wheel(wheel: VehicleWheel3D, mesh: Node3D, delta: float) -> void:
 
 
 func _update_drift_smoke() -> void:
-	var enable := drift_fsm.is_drifting()
+	var is_drifting := drift_fsm.is_drifting()
 
+	# Simple: emit when drifting
 	for smoke in smoke_nodes:
-		smoke.emitting = enable
+		smoke.emitting = is_drifting
 
+	# Position smoke at rear wheels
 	smoke_rl.global_position = mesh_rl.global_position
 	smoke_rr.global_position = mesh_rr.global_position
 

@@ -19,16 +19,14 @@ shader_parameter/quantize_colors = true
 layer = 100
 script = ExtResource("3_controller")
 target_resolution = Vector2(1280, 720)
+color_levels = 4.0
+blend = 0.7
 
 [node name="PixelationEffect" type="ColorRect" parent="PostProcessing"]
 material = SubResource("ShaderMaterial_pixel")
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 0.0
-offset_top = 0.0
-offset_right = 0.0
-offset_bottom = 0.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2

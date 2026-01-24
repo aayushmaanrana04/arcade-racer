@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=4 uid="uid://dqv3cxqpo50pp"]
+[gd_scene load_steps=28 format=4 uid="uid://dqv3cxqpo50pp"]
 
 [ext_resource type="Script" uid="uid://dd6gsvidis8jr" path="res://scripts/vehicle/car_v2.gd" id="1_uoj53"]
 [ext_resource type="Script" uid="uid://bge442hoo5qgx" path="res://car_camera.gd" id="2_k61xc"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://6std0jcdl036" path="res://assets/car.glb" id="4_06lh1"]
 [ext_resource type="PackedScene" uid="uid://b5w3hueb10u2a" path="res://assets/car.blend" id="5_td361"]
 [ext_resource type="Script" uid="uid://c1lslwffiodev" path="res://scripts/audio/jdm_engine_audio.gd" id="6_audio"]
+[ext_resource type="Shader" uid="uid://ce65qnxlimi4q" path="res://shaders/tyre_smoke.gdshader" id="7_smoke_shader"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7822p"]
 albedo_color = Color(0.08280001, 0.14748009, 0.36, 1)
@@ -181,35 +182,59 @@ shadow_mesh = SubResource("ArrayMesh_36t05")
 [sub_resource type="BoxShape3D" id="BoxShape3D_7822p"]
 size = Vector3(1.7197266, 4.772705, 0.9929199)
 
+[sub_resource type="Gradient" id="Gradient_smoke_color"]
+offsets = PackedFloat32Array(0, 0.03, 0.2, 0.6, 1)
+colors = PackedColorArray(1, 1, 1, 0.7, 1, 1, 1, 1, 1, 1, 1, 0.85, 1, 1, 1, 0.5, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_smoke"]
+gradient = SubResource("Gradient_smoke_color")
+width = 64
+
+[sub_resource type="Curve" id="Curve_smoke_scale"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 0.02), 0.0, 3.0, 0, 1, Vector2(0.2, 0.4), 2.5, 1.5, 0, 0, Vector2(0.55, 1.4), 1.0, 0.6, 0, 0, Vector2(1, 2.3), 0.3, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_smoke_scale"]
+curve = SubResource("Curve_smoke_scale")
+
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_td361"]
-lifetime_randomness = 0.1
-emission_shape_offset = Vector3(-0.03, 0.135, 0.315)
-emission_shape_scale = Vector3(0.125, 0.14, 0.365)
+lifetime_randomness = 0.35
+emission_shape_offset = Vector3(0, 0.1, 0)
+emission_shape_scale = Vector3(0.3, 0.08, 0.35)
 emission_shape = 3
-emission_box_extents = Vector3(1, 1, 1)
+emission_box_extents = Vector3(0.2, 0.05, 0.25)
 angle_min = 1.0728835e-05
 angle_max = 1.0728835e-05
-direction = Vector3(2.65, 0, -9.615)
-spread = 4.239
-initial_velocity_min = 0.5
-initial_velocity_max = 3.0
-angular_velocity_min = -1.6093254e-05
-angular_velocity_max = -1.6093254e-05
-gravity = Vector3(0, 2, 0)
-damping_min = 0.63100004
-damping_max = 0.63100004
-scale_min = 0.0
-scale_max = 0.9
-color = Color(0.76837105, 0, 0.2498664, 1)
+direction = Vector3(0, 0.8, -0.4)
+spread = 40.0
+flatness = 0.05
+initial_velocity_min = 1.5
+initial_velocity_max = 4.0
+angular_velocity_min = -90.0
+angular_velocity_max = 90.0
+gravity = Vector3(0, 0.3, 0)
+damping_min = 0.8
+damping_max = 2.0
+scale_curve = SubResource("CurveTexture_smoke_scale")
+color_ramp = SubResource("GradientTexture1D_smoke")
 hue_variation_min = -0.100000024
 hue_variation_max = 0.059999976
 anim_speed_max = 1.15
 
-[sub_resource type="SphereMesh" id="SphereMesh_td361"]
-radius = 0.3
-height = 0.5
-radial_segments = 16
-rings = 16
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_smoke"]
+render_priority = 0
+shader = ExtResource("7_smoke_shader")
+shader_parameter/smoke_color_light = Color(0.6, 0.58, 0.55, 0.55)
+shader_parameter/smoke_color_dark = Color(0.32, 0.3, 0.28, 0.65)
+shader_parameter/alpha_multiplier = 1.6
+shader_parameter/noise_scale = 2.8
+shader_parameter/edge_breakup = 0.65
+shader_parameter/tendril_strength = 0.45
+
+[sub_resource type="QuadMesh" id="QuadMesh_smoke"]
+material = SubResource("ShaderMaterial_smoke")
+size = Vector2(2, 2)
 
 [node name="car" type="VehicleBody3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5384896, 0)
@@ -219,6 +244,7 @@ center_of_mass = Vector3(0, -0.15, 0)
 linear_damp = 0.05
 angular_damp = 0.1
 script = ExtResource("1_uoj53")
+max_steer_angle = 0.4
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(-1, 4.3156528e-15, 8.742278e-08, 2.5232904e-08, 0.9574405, 0.28863075, -8.3702105e-08, 0.28863075, -0.9574405, 0, 1.677, -4.026)
@@ -226,11 +252,10 @@ current = true
 fov = 91.0
 near = 0.02
 script = ExtResource("2_k61xc")
-follow_speed = 3.0
 max_fov = 110.0
-fov_speed = 2.0
+fov_speed = 5.0
+speed_for_max_fov = 100.0
 drift_fov_boost = 10.0
-camera_tilt = 8.0
 speed_height_drop = 0.8
 
 [node name="_visuals" type="Node3D" parent="."]
@@ -317,35 +342,24 @@ transform = Transform3D(-4.0938822e-11, -0.00093657104, 0, -0.00093657104, 4.093
 [node name="visuals" parent="." instance=ExtResource("5_td361")]
 
 [node name="driftSmoke_br" type="GPUParticles3D" parent="visuals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.78517234, -0.52443373, -1.4758201)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.78517234, -0.35, -1.4758201)
 emitting = false
-amount = 32
-explosiveness = 0.02
-randomness = 0.05
-use_fixed_seed = true
-seed = 3622200378
-fixed_fps = 12
-visibility_aabb = AABB(-2.0267882, -1.4797543, -2.3055253, 5.1355505, 6.434715, 4.683081)
-local_coords = true
+amount = 48
+lifetime = 3.0
+randomness = 0.45
+visibility_aabb = AABB(-20, -3, -20, 40, 12, 40)
 process_material = SubResource("ParticleProcessMaterial_td361")
-draw_pass_1 = SubResource("SphereMesh_td361")
+draw_pass_1 = SubResource("QuadMesh_smoke")
 
 [node name="driftSmoke_bl" type="GPUParticles3D" parent="visuals"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78512603, -0.51899207, -1.7747394)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78512603, -0.35, -1.4758201)
 emitting = false
-amount = 32
-lifetime = 2.0
-interp_to_end = 0.04
-speed_scale = 2.0
-explosiveness = 0.02
-randomness = 0.18
-use_fixed_seed = true
-seed = 3622200378
-fixed_fps = 12
-visibility_aabb = AABB(-2.0267882, -1.4797543, -2.3055253, 5.1355505, 6.434715, 4.683081)
-local_coords = true
+amount = 48
+lifetime = 3.0
+randomness = 0.45
+visibility_aabb = AABB(-20, -3, -20, 40, 12, 40)
 process_material = SubResource("ParticleProcessMaterial_td361")
-draw_pass_1 = SubResource("SphereMesh_td361")
+draw_pass_1 = SubResource("QuadMesh_smoke")
 
 [node name="HeadlightLeft" type="SpotLight3D" parent="."]
 transform = Transform3D(-1, -1.518081e-08, -8.609464e-08, -4.3881744e-08, 0.93892026, 0.344135, 7.5611744e-08, 0.344135, -0.93892026, 0.6685277, 0.04084891, 2.4266038)
@@ -369,7 +383,7 @@ spot_angle_attenuation = 0.5
 
 [node name="EngineAudio" type="Node3D" parent="."]
 script = ExtResource("6_audio")
-engine_type = 1
+engine_type = 5
 aggression = 0.663
 exhaust_crackle = 0.72
 has_flutter = true
